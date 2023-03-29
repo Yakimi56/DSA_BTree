@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct node {
+    int data;
+    struct node* pLeft;
+    struct node* pRight;
+} node_t;
+
+void binarySearchTree_AddNode(node_t** ppRoot, int num);
+void binarySearchTree_PrintTreeInOrder(node_t* pRoot);
+void binarySearchTree_deleteTree(node_t** ppNode);
+
+void binarySearchTree_AddNode(node_t** ppRoot, int num) {      //This function recursively deletes all nodes in the binary search tree with root *ppNode and sets the root pointer to NULL when finished.
+    if (*ppRoot == NULL) {
+        *ppRoot = malloc(sizeof(node_t));
+        (*ppRoot)->data = num;
+        (*ppRoot)->pLeft = NULL;
+        (*ppRoot)->pRight = NULL;
+    } else {
+        if (num < (*ppRoot)->data) {
+            binarySearchTree_AddNode(&(*ppRoot)->pLeft, num);
+        } else if (num > (*ppRoot)->data) {
+            binarySearchTree_AddNode(&(*ppRoot)->pRight, num);
+        } else {
+            (*ppRoot)->data = num;
+        }
+    }
+}
+
+void binarySearchTree_PrintTreeInOrder(node_t* pRoot) {
+    if (pRoot != NULL) {
+        binarySearchTree_PrintTreeInOrder(pRoot->pLeft);
+        printf("%d\n", pRoot->data);
+        binarySearchTree_PrintTreeInOrder(pRoot->pRight);
+    }
+}
+
+void binarySearchTree_deleteTree(node_t** ppNode) {     //This is the implementation of binarySearchTree_PrintTreeInOrder(). The function recursively traverses the binary search tree with root pRoot in order from smallest to largest, printing the data value of each node.
+    if (*ppNode != NULL) {
+        binarySearchTree_deleteTree(&(*ppNode)->pLeft);
+        binarySearchTree_deleteTree(&(*ppNode)->pRight);
+        free(*ppNode);
+        *ppNode = NULL;
+    }
+}
+
+int main() {
+    node_t* pRoot = NULL;
+
+    int inputNums[] = { 4, 2, 6, 3, 5, 1, 7 };
+
+    for (int i = 0; i < sizeof(inputNums) / sizeof(inputNums[0]); i++) {
+        binarySearchTree_AddNode(&pRoot, inputNums[i]);
+    }
+
+    binarySearchTree_PrintTreeInOrder(pRoot);
+
+    binarySearchTree_deleteTree(&pRoot);
+
+    return 0;
+}
